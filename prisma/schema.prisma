@@ -12,20 +12,42 @@ datasource db {
 }
 
 model Candidate {
-  id        String   @id @default(cuid())
-  name      String
-  party     String?
-  office    String
-  createdAt DateTime @default(now())
+  id              String   @id @default(cuid())
+  name            String
+  party           String?
+  image_url       String?
+  incumbent       Boolean  @default(false)
+  contact_phone   Int?
+  contact_email   String?
+  contact_address String?
+  createdAt       DateTime @default(now())
+
+  officeId  String?
+  office    Office?   @relation(fields: [officeId], references: [id])
 
   positions Position[]
 }
 
 model Issue {
-  id        String @id @default(cuid())
-  name      String @unique
+  id   String @id @default(cuid())
+  name String @unique
 
   positions Position[]
+}
+
+model Office {
+  id      String @id @default(cuid())
+  name    String
+  level   Level
+
+  candidates Candidate[]
+}
+
+enum Level {
+  Not_Available
+  STATE
+  COUNTY
+  FEDERAL
 }
 
 model Position {

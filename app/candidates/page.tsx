@@ -3,6 +3,9 @@ import Link from "next/link";
 
 export default async function CandidatesPage() {
   const candidates = await prisma.candidate.findMany({
+    include: {
+      office: true,
+    },
     orderBy: {
       name: "asc",
     },
@@ -24,10 +27,13 @@ export default async function CandidatesPage() {
             </h2>
           </Link>
 
-          <p>{candidate.office}</p>
+          <p>
+            {candidate.office?.name} ({candidate.office?.level})
+          </p>
           <p className="text-gray-600">
             {candidate.party}
           </p>
+          {candidate.incumbent ? <p>Incumbent</p>: <p>Running</p>}
         </div>
         ))}
       </div>
