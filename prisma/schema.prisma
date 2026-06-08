@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Candidate {
+  id        String   @id @default(cuid())
+  name      String
+  party     String?
+  office    String
+  createdAt DateTime @default(now())
+
+  positions Position[]
+}
+
+model Issue {
+  id        String @id @default(cuid())
+  name      String @unique
+
+  positions Position[]
+}
+
+model Position {
+  id          String @id @default(cuid())
+  candidateId String
+  issueId     String
+  score       Int
+
+  candidate Candidate @relation(fields: [candidateId], references: [id])
+  issue     Issue     @relation(fields: [issueId], references: [id])
+
+  @@unique([candidateId, issueId])
+}
