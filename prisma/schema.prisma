@@ -11,10 +11,30 @@ datasource db {
   provider = "postgresql"
 }
 
+model UserProfile {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  preferences UserIssuePreference[]
+}
+
+model UserIssuePreference {
+  id        String @id @default(cuid())
+  userId    String
+  issueId   String
+  score     Int
+
+  user      UserProfile @relation(fields: [userId], references: [id])
+  issue     Issue       @relation(fields: [issueId], references: [id])
+
+  @@unique([userId, issueId])
+}
+
 model Candidate {
   id              String   @id @default(cuid())
   name            String
-  party           String?
   image_url       String?
   incumbent       Boolean  @default(false)
   contact_phone   Int?
@@ -25,6 +45,9 @@ model Candidate {
   officeId  String?
   office    Office?   @relation(fields: [officeId], references: [id])
 
+  partyId  String?
+  party    Party?     @relation(fields: [partyId], references: [id])
+
   positions Position[]
 }
 
@@ -32,14 +55,24 @@ model Issue {
   id   String @id @default(cuid())
   name String @unique
 
-  positions Position[]
+  positions   Position[]
+  preferences UserIssuePreference[]
+}
+
+model Party{
+  id   String @id @default(cuid())
+  name String @unique
+
+  candidates Candidate[]
 }
 
 model Office {
-  id      String @id @default(cuid())
-  name    String
-  level   Level
+  id       String @id @default(cuid())
+  name     String
+  level    Level
+  district String?
 
+  @@unique([name,level,district])
   candidates Candidate[]
 }
 

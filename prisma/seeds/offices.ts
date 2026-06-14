@@ -20,6 +20,16 @@ async function main() {
     ],
     skipDuplicates: true,
   });
+  await prisma.party.createMany({
+    data: [
+      { name: "Republican"},
+      { name: "Democrat"},
+      { name: "Work"},
+      { name: "Green"},
+      { name: "Nonpartisan"},
+    ],
+    skipDuplicates: true,
+  });
 }
 
 main()
